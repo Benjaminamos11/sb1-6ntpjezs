@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import BlogCard from '../../components/BlogCard.astro';
+
+const posts = await getCollection('blog');
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout 
+  title="Blog | Latest Posts and Updates"
+  description="Explore our latest blog posts covering industry insights, updates, and expert opinions."
+>
+  <section class="blog-index">
+    <h1>Latest Posts</h1>
+    <div class="posts-grid">
+      {sortedPosts.map(post => (
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          author={post.data.author}
+          slug={post.slug}
+          image={post.data.image}
+        />
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .blog-index {
+    padding: 2rem 0;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--color-text);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+</style>

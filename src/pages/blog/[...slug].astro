@@ -1,0 +1,162 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import BlogSchema from '../../components/BlogSchema.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<Layout
+  title={post.data.seo?.title || post.data.title}
+  description={post.data.seo?.description || post.data.description}
+  image={post.data.image}
+  type="article"
+>
+  <BlogSchema post={post} url={canonicalURL} />
+  
+  <article class="blog-post">
+    {post.data.image && (
+      <img src={post.data.image} alt={post.data.title} class="featured-image" />
+    )}
+    <header>
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+        <span>By {post.data.author}</span>
+      </div>
+      {post.data.tags && (
+        <div class="tags">
+          {post.data.tags.map(tag => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="content">
+      <Content />
+    </div>
+
+    <footer>
+      <div class="share">
+        <h3>Share this post</h3>
+        <div class="share-buttons">
+          <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(canonicalURL)}`}
+             target="_blank"
+             rel="noopener noreferrer">
+            Share on Twitter
+          </a>
+          <a href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(canonicalURL)}&title=${encodeURIComponent(post.data.title)}`}
+             target="_blank"
+             rel="noopener noreferrer">
+            Share on LinkedIn
+          </a>
+        </div>
+      </div>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .blog-post {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .featured-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  header {
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+  }
+
+  .post-meta {
+    color: #6b7280;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
+  .content {
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  .content :global(h2) {
+    font-size: 1.875rem;
+    margin: 2rem 0 1rem;
+  }
+
+  .content :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .share {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .share h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .share-buttons a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+  }
+</style>

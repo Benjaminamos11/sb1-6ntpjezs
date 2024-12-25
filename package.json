@@ -1,0 +1,22 @@
+{
+  "name": "seo-optimized-blog",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^2.1.1",
+    "@astrojs/netlify": "^5.1.2",
+    "@astrojs/sitemap": "^3.1.1",
+    "astro": "^4.3.2",
+    "astro-robots-txt": "^1.0.0",
+    "astro-seo": "^0.8.0",
+    "schema-dts": "^1.1.2"
+  }
+}

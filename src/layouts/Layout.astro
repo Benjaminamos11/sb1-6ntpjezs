@@ -1,0 +1,151 @@
+---
+import { SEO } from 'astro-seo';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+}
+
+const {
+  title,
+  description = "A modern blog built with Astro focusing on performance and SEO",
+  image = "/default-og.png",
+  type = "website"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <SEO
+      title={title}
+      description={description}
+      openGraph={{
+        basic: {
+          title,
+          type,
+          image,
+        },
+        optional: {
+          description,
+        },
+      }}
+      twitter={{
+        creator: "@yourtwitterhandle",
+        card: "summary_large_image",
+      }}
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav>
+        <a href="/" class="logo">Blog</a>
+        <div class="nav-links">
+          <a href="/blog">Blog</a>
+        </div>
+      </nav>
+    </header>
+    
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/contact">Contact</a>
+        </div>
+        <p>&copy; {new Date().getFullYear()} Your Blog. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --color-primary: #3b82f6;
+    --color-text: #1f2937;
+    --color-background: #ffffff;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-family: var(--font-family);
+    background: var(--color-background);
+    color: var(--color-text);
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .site-header {
+    padding: 1rem;
+    background: var(--color-background);
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .site-header nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-links a {
+    margin-left: 1.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .site-footer {
+    background: #f3f4f6;
+    padding: 2rem;
+    margin-top: auto;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer-links {
+    margin-bottom: 1rem;
+  }
+
+  .footer-links a {
+    margin: 0 1rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+</style>
